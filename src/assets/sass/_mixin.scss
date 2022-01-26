@@ -1,0 +1,143 @@
+@mixin icon($url, $size) {
+  display: inline-block;
+  background-image: url($url);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: $size;
+  height: $size;
+}
+
+@mixin input_reset_defaults() {
+  background: none;
+  outline: 0;
+  border: none;
+}
+
+@mixin button_reset_defaults() {
+  background: none;
+  outline: 0;
+  border: none;
+}
+
+@mixin on_breakpoint($breakpoint) {
+  @if $breakpoint == 'xs' {
+    @media (max-width: 575px) {
+      @content;
+    }
+  } @else if $breakpoint == 'sm' {
+    @media (min-width: 576px) and (max-width: 767px) {
+      @content;
+    }
+  } @else if $breakpoint == 'md' {
+    @media (min-width: 768px) and (max-width: 991px) {
+      @content;
+    }
+  } @else if $breakpoint == 'lg' {
+    @media (min-width: 992px) and (max-width: 1199px) {
+      @content;
+    }
+  } @else if $breakpoint == 'xl' {
+    @media (min-width: 1200px) and (max-width: 1399px) {
+      @content;
+    }
+  } @else if $breakpoint == 'xxl' {
+    @media (min-width: 1400px) and (max-width: 1599px) {
+      @content;
+    }
+  } @else if $breakpoint == 'xxxl' {
+    @media (min-width: 1600px) and (max-width: 1919px) {
+      @content;
+    }
+  }
+}
+
+@mixin down_to($breakpoint) {
+  @if $size == 'xs' {
+    @media screen and (min-width: 0px) {
+      @content;
+    }
+  }
+
+  @if $size == 'sm' {
+    @media screen and (min-width: 576px) {
+      @content;
+    }
+  }
+
+  @if $size == 'md' {
+    @media screen and (min-width: 768px) {
+      @content;
+    }
+  }
+
+  @if $size == 'lg' {
+    @media screen and (min-width: 992px) {
+      @content;
+    }
+  }
+
+  @if $size == 'xl' {
+    @media screen and (min-width: 1200px) {
+      @content;
+    }
+  }
+
+  @if $size == 'xxl' {
+    @media screen and (min-width: 1600px) {
+      @content;
+    }
+  }
+
+  @if $size == 'xxxl' {
+    @media screen and (min-width: 1920px) {
+      @content;
+    }
+  }
+
+}
+
+@mixin up_to($size) {
+  @if $size == 'xs' {
+    @media screen and (max-width: 575px) {
+      @content;
+    }
+  }
+
+  @if $size == 'sm' {
+    @media screen and (max-width: 767px) {
+      @content;
+    }
+  }
+
+  @if $size == 'md' {
+    @media screen and (max-width: 991px) {
+      @content;
+    }
+  }
+
+  @if $size == 'lg' {
+    @media screen and (max-width: 1199px) {
+      @content;
+    }
+  }
+
+  @if $size == 'xl' {
+    @media screen and (max-width: 1599px) {
+      @content;
+    }
+  }
+
+  @if $size == 'xxl' {
+    @media screen and (max-width: 1919px) {
+      @content;
+    }
+  }
+
+  @if $size == 'xxxl' {
+    @media screen and (max-width: 2559px) {
+      @content;
+    }
+  }
+
+}
