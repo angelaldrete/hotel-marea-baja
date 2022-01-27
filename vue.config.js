@@ -10,7 +10,7 @@ module.exports = {
     }
   },
 
-  publicPath: process.env.NODE_ENV === 'production' ? '/hotel_mb/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/public/' : '/',
 
   transpileDependencies: [
     'vuetify',
