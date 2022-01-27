@@ -4,13 +4,12 @@ module.exports = {
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
-        ws: true,
         changeOrigin: true
       }
     }
   },
 
-  publicPath: '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/dist/' : '/',
 
   transpileDependencies: [
     'vuetify',
