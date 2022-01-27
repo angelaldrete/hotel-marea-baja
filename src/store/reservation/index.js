@@ -16,14 +16,14 @@ const getters = {
 
 const actions = {
   async getAllReservations({ commit }) {
-    const res = await axios.get('http://localhost:3000/api/reservations')
+    const res = await axios.get(`${process.env.VUE_APP_API_ENDPOINT}/reservations`)
     if (res.status === 200) {
       commit(SET_RESERVATIONS, res.data)
     }
   },
 
   async getAllReservationsByDate({ commit }, date) {
-    const res = await axios.get('http://localhost:3000/api/reservations', {
+    const res = await axios.get(`${process.env.VUE_APP_API_ENDPOINT}/reservations`, {
       params: {
         date
       }
@@ -34,7 +34,7 @@ const actions = {
   },
 
   async getReservationById({ commit }, id) {
-    const res = await axios.get(`http://localhost:3000/api/reservations/${id}`)
+    const res = await axios.get(`${process.env.VUE_APP_API_ENDPOINT}/reservations/${id}`)
 
     if (res.status === 200) {
       commit(SET_RESERVATION, res.data)
@@ -42,18 +42,18 @@ const actions = {
   },
 
   async getConfirmationNumber() {
-    const res = await axios.get('http://localhost:3000/api/confirmation')
+    const res = await axios.get(`${process.env.VUE_APP_API_ENDPOINT}/confirmation`)
     return res.data.confirmationNumber
   },
 
   async createReservation({ commit }, reservation) {
-    const res = await axios.post('http://localhost:3000/api/reservations', reservation)
+    const res = await axios.post(`${process.env.VUE_APP_API_ENDPOINT}/reservations`, reservation)
 
     commit(SET_RESERVATIONS, res.data)
   },
 
   async getAvailableRoomsByDate({ commit }, { dateOfArrival, dateOfDeparture }) {
-    const res = await axios.get(`http://localhost:3000/api/available_rooms/${dateOfArrival}/${dateOfDeparture}`)
+    const res = await axios.get(`${process.env.VUE_APP_API_ENDPOINT}/available_rooms/${dateOfArrival}/${dateOfDeparture}`)
 
     console.log(res)
 
@@ -63,7 +63,7 @@ const actions = {
   },
 
   async updateReservation(_, reservation) {
-    const res = await axios.put(`http://localhost:3000/api/reservations/${reservation.id}`, reservation)
+    const res = await axios.put(`${process.env.VUE_APP_API_ENDPOINT}/reservations/${reservation.id}`, reservation)
     return res.data
   }
 }

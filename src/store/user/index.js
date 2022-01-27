@@ -21,7 +21,7 @@ const getters = {
 const actions = {
 
   async registerUser(_, { fullName, email, password }) {
-    const response = await axios.post('http://localhost:3000/api/users/register', { fullName, email, password })
+    const response = await axios.post(`${process.env.VUE_APP_API_ENDPOINT}/users/register`, { fullName, email, password })
     return response.data
   },
 
@@ -32,7 +32,7 @@ const actions = {
       password
     }
 
-    const response = await axios.post('http://localhost:3000/api/users/login', body)
+    const response = await axios.post(`${process.env.VUE_APP_API_ENDPOINT}/users/login`, body)
 
     console.log(response)
 
@@ -48,19 +48,19 @@ const actions = {
   },
 
   async getUsers({ commit }) {
-    const res = await axios.get('http://localhost:3000/api/users')
+    const res = await axios.get(`${process.env.VUE_APP_API_ENDPOINT}/users`)
 
     commit(SET_USERS, res.data)
   },
 
   async getUser({ commit }) {
-    const res = await axios.get(`http://localhost:3000/api/users/me`)
+    const res = await axios.get(`${process.env.VUE_APP_API_ENDPOINT}/users/me`)
 
     commit(SET_USER, res.data)
   },
 
   async modifyUsername({ commit }, {id, username}) {
-    const res = await axios.put(`http://localhost:3000/api/users/username/${id}`, {
+    const res = await axios.put(`${process.env.VUE_APP_API_ENDPOINT}/users/username/${id}`, {
       username
     })
 
@@ -69,13 +69,13 @@ const actions = {
 
   modifyPassword(_, {id, password}) {
     console.log(id)
-    return axios.put(`http://localhost:3000/api/users/password/${id}`, {
+    return axios.put(`${process.env.VUE_APP_API_ENDPOINT}/users/password/${id}`, {
       password
     })
   },
 
   deleteUser(_, {id}) {
-    return axios.delete(`http://localhost:3000/api/users/${id}`)
+    return axios.delete(`${process.env.VUE_APP_API_ENDPOINT}/users/${id}`)
   }
 }
 

@@ -78,12 +78,12 @@ export default {
     ...mapActions(['getUser', 'modifyUsername', 'modifyPassword']),
     async submitNewPassword() {
       if (this.newPassword == this.newPasswordConfirmation) {
-        const res = await this.modifyPassword({
+        await this.modifyPassword({
           id: this.theUser._id,
           password: this.newPassword
         })
 
-        console.log(res)
+        this.$router.push('/')
       } else {
         alert('Las contraseñas no coinciden')
       }

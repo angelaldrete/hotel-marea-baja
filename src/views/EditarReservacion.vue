@@ -273,6 +273,7 @@ export default {
         rooms: this.roomQty,
         occupiedRooms: this.rooms.filter(room => room.checked).map(room => room.key),
       })
+      this.$router.push('/')
     }
   },
 
