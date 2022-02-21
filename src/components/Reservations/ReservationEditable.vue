@@ -43,11 +43,38 @@
         Editar
       </Button>
     </div>
+    <div class="delete">
+      <Button
+        type="secondary"
+        @click.prevent="showDeletePopup"
+      >
+        Borrar
+      </Button>
+    </div>
+    <div class="popup" v-if="toggleDeletePopup">
+      <h2 class="title">Borrar</h2>
+      <p>¿Estás seguro que quieres borrar la reservación? No hay vuelta atrás.</p>
+      <div class="btn-group">
+        <Button
+          type="secondary"
+          @click.prevent="removeReservation"
+        >
+          Borrar
+        </Button>
+        <Button
+          type="secondary"
+          @click.prevent="toggleDeletePopup = false"
+        >
+          Cancelar
+        </Button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Button from '../Button';
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Reservation',
@@ -90,6 +117,10 @@ export default {
     }
   },
 
+  data:() => ({
+    toggleDeletePopup: false
+  }),
+
   components: {
     Button
   },
@@ -99,6 +130,17 @@ export default {
       let date = new Date(this.dateOfArrival)
       date = new Date(date.getTime() + date.getTimezoneOffset() * 60000)
       return date
+    }
+  },
+
+  methods: {
+    ...mapActions(['deleteReservation']),
+    showDeletePopup() {
+      this.toggleDeletePopup = !this.toggleDeletePopup
+    },
+
+    async removeReservation() {
+      this.deleteReservation(this.id)
     }
   }
 }
@@ -112,6 +154,7 @@ export default {
   @import '../../assets/sass/_variables.scss';
 
   .reservation {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -167,6 +210,41 @@ export default {
 
   .capitalize {
     text-transform: capitalize;
+  }
+
+  .edit {
+    @include up_to('sm') {
+      margin-bottom: 20px;
+    }
+  }
+
+  .popup {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    content: '';
+    text-align: center;
+    background: white;
+    padding: 20px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
+    width: 250px;
+    border-radius: 5px;
+    z-index: 2;
+    right: -300px;
+  }
+
+  .btn-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 10px;
+
+    button {
+      margin-bottom: 10px;
+    }
   }
 
 </style>

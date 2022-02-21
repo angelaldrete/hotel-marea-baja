@@ -30,7 +30,6 @@ export default {
   },
 
   data: () => ({
-    //
   }),
 
   computed: {
@@ -70,6 +69,10 @@ export default {
     @include up_to('md') {
       height: 62px;
     }
+  }
+
+  .delete-popup {
+
   }
 
 </style>

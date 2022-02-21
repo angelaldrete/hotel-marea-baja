@@ -65,6 +65,13 @@ const actions = {
   async updateReservation(_, reservation) {
     const res = await axios.put(`${process.env.VUE_APP_API_ENDPOINT}/api/reservations/${reservation.id}`, reservation)
     return res.data
+  },
+
+  async deleteReservation(_, id) {
+
+    console.log(id)
+    const res = await axios.delete(`${process.env.VUE_APP_API_ENDPOINT}/api/reservations/${id}`)
+    return res.data
   }
 }
 
