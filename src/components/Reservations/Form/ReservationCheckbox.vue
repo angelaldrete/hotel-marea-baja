@@ -6,6 +6,10 @@
       type="checkbox"
       :checked="value"
       class="reservation-checkbox-input"
+      :disabled="disabled"
+      :class="{
+        'checkbox-disabled': disabled
+      }"
     >
     <label :for="inputId">
       {{ label }}
@@ -28,6 +32,10 @@ export default {
     label: {
       type: Number,
       default: 1
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   }
 }
@@ -92,6 +100,11 @@ export default {
       color: $form_data_color;
       cursor: pointer;
     }
+  }
+
+  .checkbox-disabled {
+    cursor: not-allowed;
+    border-color: red;
   }
 
 </style>

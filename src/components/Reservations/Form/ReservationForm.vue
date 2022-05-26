@@ -15,6 +15,19 @@
           :dataList="rooms"
           v-model="roomQty"
         />
+        <ReservationInput
+          inputId="dateOfArrival"
+          inputType="date"
+          label="Día de llegada"
+          v-model="dateOfArrival"
+        />
+        <ReservationInput
+          inputId="dateOfDeparture"
+          inputType="date"
+          label="Día de Salida"
+          v-model="dateOfDeparture"
+          @change="checkDatesSelected"
+        />
         <div class="room-qty">No. de habitaciones</div>
         <div class="room-checkbox-wrapper">
           <div class="room-flex">
@@ -27,6 +40,7 @@
                 :inputId="`room-${room.key}`"
                 :label="room.key"
                 v-model="room.checked"
+                :disabled="room.disabled"
               />
             </div>
           </div>
@@ -39,6 +53,7 @@
                 :key="room.key"
                 :inputId="`room-${room.key}`"
                 :label="room.key"
+                :disabled="room.disabled"
                 v-model="room.checked"
               />
             </div>
@@ -50,20 +65,6 @@
           dataListId="peopleList"
           :dataList="people"
           v-model="peopleQty"
-        />
-        <ReservationInput
-          inputId="dateOfArrival"
-          inputType="date"
-          label="Día de llegada"
-          v-model="dateOfArrival"
-          @change="checkDatesSelected"
-        />
-        <ReservationInput
-          inputId="dateOfDeparture"
-          inputType="date"
-          label="Día de Salida"
-          v-model="dateOfDeparture"
-          @change="checkDatesSelected"
         />
         <ReservationInput
           inputId="checkInTime"
@@ -115,6 +116,7 @@
       Cancelar
     </Button>
   </form>
+
 </template>
 
 <script>
@@ -123,7 +125,7 @@ import ReservationInput from './ReservationInput.vue'
 import ReservationCheckbox from './ReservationCheckbox.vue'
 import ReservationSelectInput from './ReservationSelectInput.vue'
 import ReservationCurrencyInput from './ReservationCurrencyInput.vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'ReservationForm',
@@ -140,107 +142,130 @@ export default {
       rooms: [
         {
           key: 1,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 2,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 3,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 4,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 5,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 6,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 7,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 8,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 9,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 10,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 11,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 12,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 13,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 14,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 15,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 16,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 17,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 18,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 19,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 20,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 21,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 22,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 23,
-          checked: false
+          checked: false,
+          disabled: false
         },
       ],
       name: '',
-      roomQty: '',
-      peopleQty: '',
+      roomQty: 0,
+      peopleQty: 0,
       dateOfArrival: '',
       dateOfDeparture: '',
       checkInTime: '',
       checkOutTime: '',
-      nightlyRate: '',
-      totalPrice: '',
-      deposit: '',
+      nightlyRate: 0,
+      totalPrice: 0,
+      deposit: 0,
       confirmationNumber: ''
     };
   }),
@@ -250,9 +275,16 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      occupiedRooms: 'allOccupiedRooms',
+    }),
     filteredRooms: {
       get() {
-        return this.rooms.filter(room => room.key != 1);
+        return this.rooms.filter(room => {
+          if (room.key != 1) {
+            return room
+          }
+        });
       },
       set(value) {
         this.rooms = value;
@@ -276,7 +308,7 @@ export default {
         deposit: this.deposit,
         confirmationNumber: this.confirmationNumber,
         rooms: this.roomQty,
-        occupiedRooms: this.rooms.filter(room => room.checked).map(room => room.key),
+        occupiedRooms: [this.rooms.filter(room => room.checked).map(room => room.key)],
       })
       this.$router.push('/')
     },
@@ -286,6 +318,16 @@ export default {
         this.getAvailableRoomsByDate({
           dateOfArrival: this.dateOfArrival,
           dateOfDeparture: this.dateOfDeparture,
+        })
+
+        this.filteredRooms.forEach(room => {
+          this.occupiedRooms.forEach(occupiedRoomList => {
+            occupiedRoomList.forEach(occupiedRoom => {
+              if (room.key == occupiedRoom) {
+                room.disabled = true
+              }
+            })
+          })
         })
       }
     }

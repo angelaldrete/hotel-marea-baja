@@ -64,7 +64,7 @@ export default {
     },
 
     occupiedRoomsCount() {
-      return this.allReservations.reduce(reservation => {
+      return this.allReservations.filter(reservation => {
         if (reservation.dateOfArrival === this.$route.params.date)
           return reservation.occupiedRooms.length
       })

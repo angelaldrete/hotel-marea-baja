@@ -6,12 +6,14 @@ const SET_OCCUPIED_ROOMS = 'SET_OCCUPIED_ROOMS'
 
 const state = {
   reservation: {},
-  reservations: []
+  reservations: [],
+  occupiedRooms: []
 }
 
 const getters = {
   allReservations: (state) => state.reservations,
-  theReservation: (state) => state.reservation
+  theReservation: (state) => state.reservation,
+  allOccupiedRooms: (state) => state.occupiedRooms
 }
 
 const actions = {
@@ -55,8 +57,6 @@ const actions = {
   async getAvailableRoomsByDate({ commit }, { dateOfArrival, dateOfDeparture }) {
     const res = await axios.get(`${process.env.VUE_APP_API_ENDPOINT}/available_rooms/${dateOfArrival}/${dateOfDeparture}`)
 
-    console.log(res)
-
     if (res.status === 200) {
       commit(SET_OCCUPIED_ROOMS, res.data)
     }
@@ -78,7 +78,7 @@ const mutations = {
   },
 
   SET_OCCUPIED_ROOMS(state, occupiedRooms) {
-    state.reservation.occupiedRooms = occupiedRooms
+    state.occupiedRooms = occupiedRooms
   }
 }
 
