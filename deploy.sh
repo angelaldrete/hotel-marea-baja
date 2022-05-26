@@ -6,6 +6,8 @@ npm run build
 
 cd dist
 
+echo "hotelmareabaja.com" > CNAME
+
 git init
 git add -A
 git commit -m 'New Deployment'
