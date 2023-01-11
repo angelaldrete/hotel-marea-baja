@@ -115,6 +115,7 @@
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Reservacion',
 
   computed: {

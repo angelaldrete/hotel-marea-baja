@@ -34,6 +34,7 @@ import ResponsiveCalendar from '../components/Calendar/ResponsiveCalendar.vue'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Calendario',
   components: {
     CalendarMonth,

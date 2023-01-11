@@ -1,21 +1,20 @@
 {
-  "name": "hotel-marea-baja",
+  "name": "hotel-mb",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "deploy": "sh deploy.sh"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "axios": "^0.24.0",
-    "core-js": "^3.6.5",
-    "dayjs": "^1.10.7",
-    "vue": "2.6.14",
-    "vue-router": "^3.2.0",
-    "vuetify": "^2.4.0",
-    "vuex": "^3.4.0",
+    "axios": "^1.2.2",
+    "core-js": "^3.8.3",
+    "dayjs": "^1.11.7",
+    "vue": "^2.6.14",
+    "vue-router": "^3.5.1",
+    "vuetify": "^2.6.14",
+    "vuex": "^3.6.2",
     "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {

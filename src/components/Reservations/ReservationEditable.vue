@@ -77,7 +77,7 @@ import Button from '../Button';
 import { mapActions } from 'vuex'
 
 export default {
-  name: 'Reservation',
+  name: 'ReservationEditable',
   props: {
     id: String,
     name: {
