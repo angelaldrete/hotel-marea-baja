@@ -16,9 +16,9 @@
 
 <script>
 
-import NavBar from '../../src/components/NavBar/NavBar.vue'
-import Search from '../../src/components/Search.vue'
-import Login from '../../src/views/Login.vue'
+import NavBar from './components/NavBar/NavBar.vue'
+import Search from './components/Search.vue'
+import Login from './views/Login.vue'
 import { mapGetters } from 'vuex'
 
 export default {
