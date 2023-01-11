@@ -48,6 +48,7 @@ import AddButton from '../components/AddButton.vue'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Configuracion',
   components: {
     AuthInput,
