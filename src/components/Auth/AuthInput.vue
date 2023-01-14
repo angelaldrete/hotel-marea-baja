@@ -62,10 +62,14 @@ export default {
     padding: 10px 25px;
     width: 400px;
     margin-bottom: 20px;
+    &:focus-within {
+      outline: $form_selected 1px solid;
+    }
     @include up_to('md') {
       width: 100%;
     }
   }
+
 
   input[placeholder] {
     font-size: 14px;

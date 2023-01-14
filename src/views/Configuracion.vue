@@ -25,11 +25,13 @@
 
     <section class="users">
       <div class="title">Usuarios</div>
+      <Loading v-if="loading"/>
       <User
-        v-for="(user, index) in allUsers"
-        :key="index"
+        v-else
+        v-for="user in allUsers"
+        :key="user._id"
         :name="user.fullName"
-        :id="user.id"
+        :id="user._id"
       />
       <AddButton
         @click.prevent="$router.push('/crear-usuario')"
@@ -46,6 +48,7 @@ import Button from '../components/Button.vue'
 import User from '../components/Auth/User.vue'
 import AddButton from '../components/AddButton.vue'
 import { mapGetters, mapActions } from 'vuex'
+import Loading from '../components/Loading.vue'
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
@@ -54,23 +57,35 @@ export default {
     AuthInput,
     Button,
     AddButton,
-    User
+    User,
+    Loading
   },
 
   data:() => ({
     newPassword: '',
     newPasswordConfirmation: '',
+    loading: true
   }),
 
+  mounted() {
+    this.fetchUsers()
+    this.loading = false
+  },
+
+    computed: {
+    ...mapGetters(['allUsers', 'theUserId']),
+  },
+
   methods: {
-    ...mapActions(['getUsers', 'getUser', 'modifyPassword']),
+    ...mapActions(['fetchUsers', 'modifyPassword']),
     async submitNewPassword() {
       if ( this.newPassword != '' && this.newPasswordConfirmation != '' ) {
         if ( this.newPassword == this.newPasswordConfirmation ) {
           await this.modifyPassword({
-            password: this.newPassword
+            id: this.theUserId,
+            password: this.newPassword,
           })
-          this.$router.push('/')
+          alert("La contrasena ha sido cambiada correctamente")
         } else {
           alert('Las contraseñas no coinciden')
         }
@@ -79,15 +94,7 @@ export default {
       }
     },
   },
-
-  computed: {
-    ...mapGetters(['allUsers', 'theUser']),
-  },
-
-  created() {
-    this.getUsers()
-    this.getUser()
-  }
+  
 }
 </script>
 

@@ -3,11 +3,12 @@
     class="calendar-day"
     :class="{
       'calendar-day--not-current': !day.isCurrentMonth,
+      'calendar-day--previous': day.date < new Date().toISOString().split('T')[0],
       'calendar-day--today': isToday,
-      'some-reservations': reservationsByDayCount > 0,
-      'full': (reservationsByDayCount > 0 && reservationsByDayCount == 24)
+      'some-reservations': someReservations,
+      'full': full
     }"
-    @click="reservationsByDayCount > 0 ? $router.push(`/reservaciones/${day.date}`) : null"
+    @click="someReservations ? $router.push(`/reservaciones/${day.date}`) : null"
   >
     <span>
       {{ label }}
@@ -17,21 +18,17 @@
       {{ weekday }}
     </div>
 
-    <div class="reservation" v-if="reservationsByDayCount > 0">
+    <div class="reservation" v-if="someReservations">
       <span class="reservation-count">
-        {{ 24 - occupiedRooms.length }}
+        {{ 23 - occupiedRooms }}
       </span>
       disponibles
     </div>
-    <div class="reservation-responsive" v-else-if="(reservationsByDayCount > 0 || reservationsByDayCount == 24)">
+    <div class="reservation" v-else-if="full">
       <span class="full-count">
-        Reservaciones Llenas
+        {{ 23 - occupiedRooms }}
       </span>
-    </div>
-    <div class="reservation-responsive" v-else>
-      <span class="no-reserv">
-        Ninguna reservación
-      </span>
+      disponibles
     </div>
   </li>
 </template>
@@ -39,7 +36,6 @@
 <script>
 import dayjs from "dayjs";
 require('dayjs/locale/es')
-import { mapGetters } from 'vuex'
 
 export default {
   name: "CalendarMonthDayItem",
@@ -58,11 +54,12 @@ export default {
     isToday: {
       type: Boolean,
       default: false
-    }
+    },
+    reservations: Array
   },
 
   computed: {
-    ...mapGetters(['allReservations']),
+
     label() {
       return dayjs(this.day.date).format("DD");
     },
@@ -70,27 +67,27 @@ export default {
     weekday() {
       return dayjs(this.day.date).locale('es').format("dddd")
     },
-
-    reservationsByDayCount() {
-      return this.allReservations.filter(
-        reservation => reservation.dateOfArrival === this.day.date
-      ).length;
-    }
   },
 
   data:() => ({
-    occupiedRooms: []
+    occupiedRooms: [],
+    someReservations: false,
+    full: false
   }),
 
-  mounted() {
-    this.allReservations.forEach(reservation => {
-      if (reservation.dateOfArrival === this.day.date) {
-        reservation.occupiedRooms.forEach(occupiedRoom => {
-          this.occupiedRooms.push(occupiedRoom)
-        })
+  created() {
+    this.occupiedRooms = []
+    this.reservations?.forEach(reservation => {
+      if (this.day.date >= reservation.dateOfArrival && this.day.date <= reservation.dateOfDeparture) {
+        this.occupiedRooms.push(reservation.occupiedRooms.length)
       }
     })
-  }
+    this.occupiedRooms = this.occupiedRooms.reduce((arr, cur) => arr + cur, 0)
+    if (this.occupiedRooms === 23) {
+      this.full = true
+    } else if (this.occupiedRooms > 0)
+    this.someReservations = true
+  },
 };
 </script>
 
@@ -130,13 +127,17 @@ export default {
   }
 }
 
+.calendar-day--previous {
+  background-color: rgba(grey, 0.15);
+  @include up_to('md') {
+    display: none;
+  }
+}
+
 .calendar-day--not-current {
-  background-color: white;
+  background-color: rgba(grey, 0.25);
   color: var(--grey-300);
   cursor: default;
-  &:hover {
-    background-color: white;
-  }
   @include up_to('md') {
     display: none;
   }
@@ -178,10 +179,6 @@ export default {
 
 .full {
   background: $full;
-  cursor: pointer;
-  &:hover {
-    background-color: var(--grey-200);
-  }
 
   @include up_to('md') {
     font-weight: 400;

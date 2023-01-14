@@ -1,5 +1,6 @@
 <template>
-  <div class="reservation-single">
+  <Loading v-if="loading"/>
+  <div class="reservation-single" v-else>
     <div class="reservation-wrapper">
       <div class="name reservation-item">
         {{ theReservation.name }}
@@ -22,10 +23,11 @@
       <div class="reservation-item">
         <span
           v-for="(room, index) in theReservation.occupiedRooms"
-          :key="index"
+          :key="room"
           class="room-num"
         >
-          {{ room === theReservation.occupiedRooms[theReservation.occupiedRooms.length - 1] ? room : `${room},` }}
+        
+          {{ (theReservation.occupiedRooms.length - 1) == index ? room : room + ',' }}
         </span>
       </div>
       <div class="reservation-item">
@@ -105,7 +107,7 @@
         </div>
       </div>
       <div class="reservation-item">
-        <div class="label">Reservación hecha por <strong>{{ theReservation.user.fullName }}</strong></div>
+        <div class="label">Reservación hecha por <strong>{{ theReservation.user?.fullName }}</strong></div>
       </div>
     </div>
   </div>
@@ -113,13 +115,22 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import Loading from '../components/Loading.vue'
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Reservacion',
 
+  components: {
+    Loading
+  },
+
+  data:() => ({
+    theReservation: {},
+    loading: true
+  }),
+
   computed: {
-    ...mapGetters(['theReservation']),
 
     offsetedArrivalDate() {
       let date = new Date(this.theReservation.dateOfArrival)
@@ -135,11 +146,12 @@ export default {
   },
 
   methods: {
-    ...mapActions(['getReservationById']),
+    ...mapActions(['fetchReservationById']),
   },
 
   async mounted() {
-    await this.getReservationById(this.$route.params.id)
+    this.theReservation = await this.fetchReservationById(this.$route.params.id)
+    this.loading = false
   }
 }
 </script>

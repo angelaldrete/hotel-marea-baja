@@ -3,7 +3,10 @@
     <div class="title">
       Mis Reservaciones
     </div>
+
+    <Loading v-if="loading"/>
     <ReservationEditable
+      v-else
       v-for="reservation in filteredReservationsByUser"
       :key="reservation._id"
       :checkInTime="reservation.checkIn"
@@ -19,31 +22,36 @@
 </template>
 
 <script>
+import Loading from '../components/Loading.vue'
 import ReservationEditable from '../components/Reservations/ReservationEditable.vue'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'MisReservaciones',
   components: {
-    ReservationEditable
+    ReservationEditable,
+    Loading
   },
 
-  computed: {
-    ...mapGetters(['theUser']),
-    ...mapGetters(['allReservations']),
+  data: () => ({
+    loading: true
+  }),
 
-    filteredReservationsByUser() {
-      return this.allReservations.filter(reservation => reservation.user.id === this.theUser.id)
-    }
-  },
-
-  created() {
-    this.getUser()
+  async mounted() {
+    await this.fetchReservations()
+    this.loading = false
   },
 
   methods: {
-    ...mapActions(['getUser'])
-  }
+    ...mapActions(['fetchReservations']),
+  },
+
+  computed: {
+    ...mapGetters(['theUserId', 'allReservations']),
+    filteredReservationsByUser() {
+      return this.allReservations.filter(reservation => reservation.user.id === this.theUserId)
+    }
+  },
 }
 </script>
 

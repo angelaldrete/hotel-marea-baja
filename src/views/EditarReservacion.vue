@@ -1,11 +1,13 @@
 <template>
-  <form class="reservation-form">
+  <Loading v-if="loading"/>
+  <form class="reservation-form" v-else>
     <div class="wrapper">
       <div class="form-wrapped">
         <ReservationInput
           inputId="clientName"
           inputType="text"
           label="Nombre del Cliente"
+          placeholder="Nombre"
           v-model="name"
         />
         <ReservationSelectInput
@@ -15,33 +17,33 @@
           :dataList="rooms"
           v-model="roomQty"
         />
+        <ReservationInput
+          inputId="dateOfArrival"
+          inputType="date"
+          label="Día de llegada"
+          v-model="dateOfArrival"
+          @change="checkDatesSelected"
+        />
+        <ReservationInput
+          inputId="dateOfDeparture"
+          inputType="date"
+          label="Día de Salida"
+          v-model="dateOfDeparture"
+          @change="checkDatesSelected"
+        />
         <div class="room-qty">No. de habitaciones</div>
         <div class="room-checkbox-wrapper">
-          <div class="room-flex">
-            <div
-              v-for="room in filteredRooms.slice(0, Math.ceil(filteredRooms.length / 2))"
+          <div
+            v-for="room in rooms"
+            :key="room.key"
+          >
+            <ReservationCheckbox
+              v-if="!room.disabled"
               :key="room.key"
-            >
-              <ReservationCheckbox
-                :key="room.key"
-                :inputId="`room-${room.key}`"
-                :label="room.key"
-                v-model="room.checked"
-              />
-            </div>
-          </div>
-          <div class="room-flex">
-            <div
-              v-for="room in filteredRooms.slice(-Math.ceil(filteredRooms.length / 2))"
-              :key="room.key"
-            >
-              <ReservationCheckbox
-                :key="room.key"
-                :inputId="`room-${room.key}`"
-                :label="room.key"
-                v-model="room.checked"
-              />
-            </div>
+              :inputId="`room-${room.key}`"
+              :label="room.key"
+              v-model="room.checked"
+            />
           </div>
         </div>
         <ReservationSelectInput
@@ -50,18 +52,6 @@
           dataListId="peopleList"
           :dataList="people"
           v-model="peopleQty"
-        />
-        <ReservationInput
-          inputId="dateOfArrival"
-          inputType="date"
-          label="Día de llegada"
-          v-model="dateOfArrival"
-        />
-        <ReservationInput
-          inputId="dateOfDeparture"
-          inputType="date"
-          label="Día de Salida"
-          v-model="dateOfDeparture"
         />
         <ReservationInput
           inputId="checkInTime"
@@ -121,7 +111,8 @@ import ReservationInput from '../components/Reservations/Form/ReservationInput.v
 import ReservationCheckbox from '../components/Reservations/Form/ReservationCheckbox.vue'
 import ReservationSelectInput from '../components/Reservations/Form/ReservationSelectInput.vue'
 import ReservationCurrencyInput from '../components/Reservations/Form/ReservationCurrencyInput.vue'
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
+import Loading from '../components/Loading.vue'
 
 export default {
   name: 'ReservationForm',
@@ -131,102 +122,127 @@ export default {
     ReservationCheckbox,
     ReservationSelectInput,
     ReservationCurrencyInput,
+    Loading
   },
   data:(() => {
     return {
-      people: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      reservation: {},
+      people: [],
       rooms: [
         {
           key: 1,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 2,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 3,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 4,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 5,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 6,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 7,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 8,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 9,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 10,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 11,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 12,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 13,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 14,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 15,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 16,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 17,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 18,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 19,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 20,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 21,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 22,
-          checked: false
+          checked: false,
+          disabled: false
         },
         {
           key: 23,
-          checked: false
+          checked: false,
+          disabled: false
         },
       ],
       name: '',
@@ -239,68 +255,73 @@ export default {
       nightlyRate: '',
       totalPrice: '',
       deposit: '',
-      confirmationNumber: ''
+      confirmationNumber: '',
+      loading: true
     };
   }),
 
-  computed: {
-    filteredRooms: {
-      get() {
-        return this.rooms.filter(room => room.key != 1);
-      },
-      set(value) {
-        this.rooms = value;
-      }
-    },
-    ...mapGetters(['allReservations']),
-    ...mapGetters(['theReservation'])
+  async mounted() {
+    this.reservation = await this.fetchReservationById(this.$route.params.id)
+    this.fillReservationData();
+    this.checkDatesSelected();
+    this.loading = false
   },
 
   methods: {
-    ...mapActions(['getReservationById']),
+    ...mapActions(['fetchReservationById', 'updateReservation', 'getAvailableRoomsByDate']),
     submitReservation() {
       this.updateReservation({
+        id: this.reservation._id,
         name: this.name,
-        roomQty: this.roomQty,
-        peopleQty: this.peopleQty,
+        rooms: this.roomQty,
         dateOfArrival: this.dateOfArrival,
         dateOfDeparture: this.dateOfDeparture,
+        occupiedRooms: this.rooms.filter(room => room.checked),
+        peopleQty: this.peopleQty,
         checkInTime: this.checkInTime,
         checkOutTime: this.checkOutTime,
         nightlyRate: this.nightlyRate,
         totalPrice: this.totalPrice,
         deposit: this.deposit,
-        rooms: this.roomQty,
-        occupiedRooms: this.rooms.filter(room => room.checked).map(room => room.key),
       })
-      this.$router.push('/')
-    }
-  },
+      this.$router.push('/reservaciones')
+    },
 
-  async mounted() {
-    await this.getReservationById(this.$route.params.id)
-  },
-
-  created() {
-    this.name = this.theReservation.name
-    this.roomQty = this.theReservation.rooms
-    this.filteredRooms.forEach(room => {
-      this.theReservation.occupiedRooms.forEach(occupiedRoom => {
-        if (room.key == occupiedRoom) {
-          room.checked = true
+    async checkDatesSelected() {
+      this.loading = true
+      if (this.dateOfDeparture <= this.dateOfArrival) this.dateOfDeparture = ''
+      if (this.dateOfArrival && this.dateOfDeparture && this.dateOfArrival !== '' && this.dateOfDeparture !== '') {
+        const occupiedRooms = await this.getAvailableRoomsByDate({
+          dateOfArrival: this.dateOfArrival,
+          dateOfDeparture: this.dateOfDeparture,
+        })
+        if (occupiedRooms && occupiedRooms.length > 0) {
+          this.rooms.forEach(room => {
+            occupiedRooms.forEach(ocpRoom => {
+              if (ocpRoom === room.key) {
+                room.disabled = true
+              }
+            })
+          })
         }
-      })
-    })
-    this.peopleQty = this.theReservation.people
-    this.dateOfArrival = this.theReservation.dateOfArrival
-    this.dateOfDeparture = this.theReservation.dateOfDeparture
-    this.checkInTime = this.theReservation.checkIn
-    this.checkOutTime = this.theReservation.checkOut
-    this.nightlyRate = this.theReservation.nightlyRate
-    this.totalPrice = this.theReservation.totalPrice
-    this.deposit = this.theReservation.deposit
-    this.confirmationNumber = this.theReservation.confirmationNumber
-  }
+      }
+      this.loading = false
+    },
+
+    fillReservationData() {
+      this.name = this.reservation.name
+      this.roomQty = this.reservation.rooms
+      this.peopleQty = this.reservation.people
+      this.dateOfArrival = this.reservation.dateOfArrival
+      this.dateOfDeparture = this.reservation.dateOfDeparture
+      this.checkInTime = this.reservation.checkIn
+      this.checkOutTime = this.reservation.checkOut
+      this.nightlyRate = this.reservation.nightlyRate
+      this.totalPrice = this.reservation.totalPrice
+      this.deposit = this.reservation.deposit
+      this.confirmationNumber = this.reservation.confirmationNumber
+    },
+  },
 }
 </script>
 
@@ -342,6 +363,7 @@ export default {
 
   .room-checkbox-wrapper {
     display: flex;
+    flex-direction: column;
     margin: 10px 0;
   }
 

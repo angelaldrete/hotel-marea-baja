@@ -15,13 +15,8 @@
       </div>
       <div class="occupied-rooms">
         Habitaciones ocupadas
-        <span v-for="room in occupiedRooms" class="occupied-room" :key="room">
-          <template v-if="occupiedRooms.length > 0 && occupiedRooms[occupiedRooms.length - 1] !== room">
-            {{ `${room},` }}
-          </template>
-          <template v-else>
-            {{ room }}
-          </template>
+        <span v-for="(room, index) in occupiedRooms" class="occupied-room" :key="room">
+          {{ (occupiedRooms.length - 1) === index ? room : room + ','}}
         </span>
       </div>
     </div>

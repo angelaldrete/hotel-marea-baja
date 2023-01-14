@@ -1,5 +1,6 @@
 <template>
-  <div class="calendar-month">
+  <Loading v-if="loading"/>
+  <div class="calendar-month" v-else>
     <div class="calendar-month-header">
       <CalendarDateIndicator
         :currentDate="today"
@@ -7,18 +8,26 @@
         @dateSelected="selectDate"
         class="calendar-month-header-selected-month"
       />
-
     </div>
 
     <CalendarWeekdays/>
 
-    <ol class="days-grid">
-      <CalendarMonthDayItem
-        v-for="day in days"
-        :key="day.date"
-        :day="day"
-        :is-today="day.date === today"
-      />
+    <ol class="days-grid" v-if="reservationsByMonth && reservationsByMonth.length > 0">
+        <CalendarMonthDayItem
+          v-for="day in days"
+          :key="day.date"
+          :day="day"
+          :is-today="day.date === today"
+          :reservations="reservationsByMonth"
+        />
+    </ol>
+    <ol class="days-grid" v-else>
+        <CalendarMonthDayItem
+          v-for="day in days"
+          :key="day.date"
+          :day="day"
+          :is-today="day.date === today"
+        />
     </ol>
   </div>
 </template>
@@ -31,6 +40,9 @@ import weekOfYear from "dayjs/plugin/weekOfYear";
 import CalendarMonthDayItem from "./CalendarMonthDayItem";
 import CalendarDateIndicator from "./CalendarDateIndicator";
 import CalendarWeekdays from "./CalendarWeekdays";
+import { mapActions } from 'vuex';
+import axios from 'axios'
+import Loading from '../../components/Loading.vue'
 
 dayjs.extend(weekday);
 dayjs.extend(weekOfYear);
@@ -41,12 +53,20 @@ export default {
   components: {
     CalendarMonthDayItem,
     CalendarDateIndicator,
-    CalendarWeekdays
+    CalendarWeekdays,
+    Loading
+  },
+
+  async created() {
+    this.reservationsByMonth = await this.fillMonthlyReservations(this.today)
+    this.loading = false
   },
 
   data() {
     return {
-      selectedDate: dayjs().locale('es')
+      loading: true,
+      selectedDate: dayjs().locale('es'),
+      reservationsByMonth: []
     };
   },
 
@@ -97,7 +117,7 @@ export default {
 
       // Cover first day of the month being sunday (firstDayOfTheMonthWeekday === 0)
       const visibleNumberOfDaysFromPreviousMonth = firstDayOfTheMonthWeekday
-        ? firstDayOfTheMonthWeekday
+        ? firstDayOfTheMonthWeekday 
         : 6;
 
       const previousMonthLastMondayDayOfMonth = dayjs(
@@ -138,16 +158,28 @@ export default {
           isCurrentMonth: false
         };
       });
-    }
+    },
   },
 
   methods: {
+    ...mapActions(['fetchReservationsByMonth']),
     getWeekday(date) {
       return dayjs(date).weekday();
     },
 
     selectDate(newSelectedDate) {
       this.selectedDate = newSelectedDate;
+      this.fillMonthlyReservations(newSelectedDate.$d)
+    },
+
+    async fillMonthlyReservations(date) {
+      const theDate = new Date(date)
+      const month = theDate.getMonth() + 1
+      const year = theDate.getFullYear()
+      const res = await axios.get(
+        `${process.env.VUE_APP_API_ENDPOINT}/api/reservations/${month}/${year}`
+      );
+      return res.data;
     }
   }
 };

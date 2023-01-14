@@ -31,7 +31,7 @@ export default {
 
   mounted() {
     this.$on('search', (search) => {
-      this.$router.push(`/buscar-usuario/${search}`)
+      this.$router.push(`/buscar-cliente?cliente=${search}`)
     })
   }
 

@@ -5,7 +5,9 @@
       <div class="title">
         {{title}}
       </div>
-      <form class="login-form">
+      <form class="login-form"
+        @keypress.enter.prevent="loginUser"
+      >
         <AuthInput
           placeholder="Correo electronico"
           type="user"
@@ -20,7 +22,7 @@
         />
       </form>
       <Button
-        @click.prevent="loginUser"
+        @click="loginUser"
       >
         Iniciar Sesión
       </Button>

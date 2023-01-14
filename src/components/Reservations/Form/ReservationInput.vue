@@ -9,6 +9,8 @@
         :type="inputType"
         :id="inputId"
         :list="dataListId"
+        :placeholder="placeholder"
+        :min="inputType && inputType === 'date' ? (new Date().toISOString().split('T')[0]) : null"
         @input="$emit('input', $event.target.value)"
         @change="$emit('change', $event.target.value)"
         class="reservation-text">
@@ -46,6 +48,10 @@ export default {
       type: Array,
       required: false
     },
+    placeholder: {
+      type: String,
+      required: false
+    }
   },
 }
 

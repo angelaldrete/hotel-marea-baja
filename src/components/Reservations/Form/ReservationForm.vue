@@ -6,6 +6,7 @@
           inputId="clientName"
           inputType="text"
           label="Nombre del Cliente"
+          placeholder="Nombre"
           v-model="name"
         />
         <ReservationSelectInput
@@ -20,6 +21,7 @@
           inputType="date"
           label="Día de llegada"
           v-model="dateOfArrival"
+          @change="checkDatesSelected"
         />
         <ReservationInput
           inputId="dateOfDeparture"
@@ -28,23 +30,24 @@
           v-model="dateOfDeparture"
           @change="checkDatesSelected"
         />
-        <div class="room-qty">No. de habitaciones</div>
-        <div class="room-checkbox-wrapper">
-          <div class="room-flex">
-            <div
-              v-for="room in filteredRooms.slice(0, Math.ceil(filteredRooms.length / 2))"
+        <div class="room-qty" v-if="dateOfDeparture.length > 0">No. de habitaciones</div>
+        <div class="room-checkbox-wrapper" v-if="dateOfDeparture.length > 0">
+          <!-- <div class="room-flex"> -->
+            <Loading v-if="loading"/>
+            <div v-else
+              v-for="room in rooms"
               :key="room.key"
             >
               <ReservationCheckbox
+                v-if="!room.disabled"
                 :key="room.key"
                 :inputId="`room-${room.key}`"
                 :label="room.key"
                 v-model="room.checked"
-                :disabled="room.disabled"
               />
             </div>
-          </div>
-          <div class="room-flex">
+          <!-- </div> -->
+          <!-- <div class="room-flex">
             <div
               v-for="room in filteredRooms.slice(-Math.ceil(filteredRooms.length / 2))"
               :key="room.key"
@@ -57,7 +60,7 @@
                 v-model="room.checked"
               />
             </div>
-          </div>
+          </div> -->
         </div>
         <ReservationSelectInput
           inputId="people"
@@ -126,6 +129,7 @@ import ReservationCheckbox from './ReservationCheckbox.vue'
 import ReservationSelectInput from './ReservationSelectInput.vue'
 import ReservationCurrencyInput from './ReservationCurrencyInput.vue'
 import { mapActions, mapGetters } from 'vuex'
+import Loading from '../../Loading.vue'
 
 export default {
   name: 'ReservationForm',
@@ -135,10 +139,11 @@ export default {
     ReservationCheckbox,
     ReservationSelectInput,
     ReservationCurrencyInput,
+    Loading
   },
   data:(() => {
     return {
-      people: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      people: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
       rooms: [
         {
           key: 1,
@@ -257,16 +262,17 @@ export default {
         },
       ],
       name: '',
-      roomQty: 0,
-      peopleQty: 0,
+      roomQty: '',
+      peopleQty: '',
       dateOfArrival: '',
       dateOfDeparture: '',
       checkInTime: '',
       checkOutTime: '',
-      nightlyRate: 0,
-      totalPrice: 0,
-      deposit: 0,
-      confirmationNumber: ''
+      nightlyRate: '',
+      totalPrice: '',
+      deposit: '',
+      confirmationNumber: '',
+      loading: false
     };
   }),
 
@@ -275,61 +281,166 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      occupiedRooms: 'allOccupiedRooms',
-    }),
-    filteredRooms: {
-      get() {
-        return this.rooms.filter(room => {
-          if (room.key != 1) {
-            return room
-          }
-        });
-      },
-      set(value) {
-        this.rooms = value;
-      }
-    }
+    ...mapGetters(['allOccupiedRooms']),
   },
 
   methods: {
     ...mapActions(['createReservation', 'getConfirmationNumber', 'getAvailableRoomsByDate']),
     submitReservation() {
+      const occupiedRooms = this.rooms.filter(room => room.checked).map(filteredRoom => filteredRoom.key)
       this.createReservation({
         name: this.name,
-        roomQty: this.roomQty,
-        peopleQty: this.peopleQty,
+        rooms: this.roomQty,
         dateOfArrival: this.dateOfArrival,
         dateOfDeparture: this.dateOfDeparture,
+        occupiedRooms: occupiedRooms,
+        peopleQty: this.peopleQty,
         checkInTime: this.checkInTime,
         checkOutTime: this.checkOutTime,
         nightlyRate: this.nightlyRate,
         totalPrice: this.totalPrice,
         deposit: this.deposit,
         confirmationNumber: this.confirmationNumber,
-        rooms: this.roomQty,
-        occupiedRooms: [this.rooms.filter(room => room.checked).map(room => room.key)],
       })
       this.$router.push('/')
     },
 
-    checkDatesSelected() {
-      if (this.dateOfArrival && this.dateOfDeparture) {
-        this.getAvailableRoomsByDate({
+    async checkDatesSelected() {
+      this.loading = true
+      this.rooms = [
+            {
+              key: 1,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 2,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 3,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 4,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 5,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 6,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 7,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 8,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 9,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 10,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 11,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 12,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 13,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 14,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 15,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 16,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 17,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 18,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 19,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 20,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 21,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 22,
+              checked: false,
+              disabled: false
+            },
+            {
+              key: 23,
+              checked: false,
+              disabled: false
+            },
+          ]
+      if (this.dateOfDeparture <= this.dateOfArrival) this.dateOfDeparture = ''
+      if (this.dateOfArrival && this.dateOfDeparture && this.dateOfArrival !== '' && this.dateOfDeparture !== '') {
+        const occupiedRooms = await this.getAvailableRoomsByDate({
           dateOfArrival: this.dateOfArrival,
           dateOfDeparture: this.dateOfDeparture,
         })
-
-        this.filteredRooms.forEach(room => {
-          this.occupiedRooms.forEach(occupiedRoomList => {
-            occupiedRoomList.forEach(occupiedRoom => {
-              if (room.key == occupiedRoom) {
+        if (occupiedRooms && occupiedRooms.length > 0) {
+          this.rooms.forEach(room => {
+            occupiedRooms.forEach(ocpRoom => {
+              if (ocpRoom === room.key) {
                 room.disabled = true
               }
             })
           })
-        })
+        }
       }
+      this.loading = false
     }
   }
 }
@@ -373,6 +484,7 @@ export default {
 
   .room-checkbox-wrapper {
     display: flex;
+    flex-direction: column;
     margin: 10px 0;
   }
 

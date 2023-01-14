@@ -1,12 +1,12 @@
 <template>
   <div class="user">
     <div class="name">
-      {{ name || 'Berenice Meza' }}
+      {{ name }}
     </div>
     <div class="config">
       <span
         class="edit"
-        @click="$router.push(`/editar-usuario`)"
+        @click="$router.push(`/editar-usuario/${id}`)"
       >
       </span>
       <span
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'User',
@@ -30,8 +31,14 @@ export default {
   },
 
   methods: {
-    deleteUser() {
-      console.log('Are you sure? ')
+    ...mapActions({ removeUser: 'deleteUser'}),
+    async deleteUser() {
+      const answer = prompt(`Estas seguro que quieres borrar al usuario ${this.name} (Ss/Nn)`)
+      if (answer && answer.match(/[Ss][Ii]?/g)) {
+        await this.removeUser(this.id)
+        alert(`El usuario ${this.name} fue borrado exitosamente`)
+        this.$router.push('/')
+      }
     }
   }
 }

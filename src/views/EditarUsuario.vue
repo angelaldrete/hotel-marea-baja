@@ -1,26 +1,26 @@
 <template>
   <div class="user">
     <div class="title">
-      Usuario - {{ theUser.fullName }}
+      {{ user.fullName }}
     </div>
     <section class="user-name-edit">
-      <div class="subtitle">Editar Nombre del Usuario</div>
+      <div class="subtitle">Editar Correo Electronico</div>
       <AuthInput
-        placeholder="Nuevo Nombre de Usuario"
-        type="password"
-        inputType="text"
-        v-model="newUsername"
+        placeholder="Nuevo Correo Electronico"
+        type="user"
+        inputType="email"
+        v-model="newEmail"
       />
       <AuthInput
-        placeholder="Confirmar Nombre de Usuario"
-        type="password"
-        inputType="text"
-        v-model="newUsernameConfirmation"
+        placeholder="Confirmar Correo Electronico"
+        type="user"
+        inputType="email"
+        v-model="newEmailConfirmation"
       />
 
       <Button
         type="secondary"
-        @click.prevent="submitNewUsername"
+        @click.prevent="submitNewEmail"
       >
         Confirmar
       </Button>
@@ -54,7 +54,7 @@
 import AuthInput from '../components/Auth/AuthInput.vue'
 import Button from '../components/Button.vue'
 
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'EditarUsuario',
@@ -64,46 +64,51 @@ export default {
   },
 
   data:() => ({
+    user: {},
     newPassword: '',
     newPasswordConfirmation: '',
-    newUsername: '',
-    newUsernameConfirmation: '',
+    newEmail: '',
+    newEmailConfirmation: '',
   }),
 
-  created() {
-    this.getUser()
+  async mounted() {
+    this.user = await this.fetchUserById(this.$route.params.id)
+    this.fillUserData();
   },
 
   methods: {
-    ...mapActions(['getUser', 'modifyUsername', 'modifyPassword']),
+    ...mapActions(['modifyEmail', 'modifyPassword', 'fetchUserById']),
     async submitNewPassword() {
       if (this.newPassword == this.newPasswordConfirmation) {
         await this.modifyPassword({
-          id: this.theUser._id,
+          id: this.user._id,
           password: this.newPassword
         })
-
-        this.$router.push('/')
+        alert('El cambio se logro con exito')
+        this.$router.push('/configuracion')
       } else {
         alert('Las contraseñas no coinciden')
       }
     },
 
-    async submitNewUsername() {
-      if (this.newUsername == this.newUsernameConfirmation) {
-        this.modifyUsername({
-          id: this.theUser._id,
-          username: this.newUsername
+    async submitNewEmail() {
+      if (this.newEmail == this.newEmailConfirmation) {
+        this.modifyEmail({
+          id: this.user._id,
+          email: this.newEmail
         })
+        alert('El cambio se logro con exito')
+        this.$router.push('/configuracion')
       } else {
-        alert('Los nombres de usuario no coinciden')
+        alert('Los correos no coinciden')
       }
+    },
+
+    fillUserData() {
+      this.newEmail = this.user.email
+      this.newEmailConfirmation = this.user.email
     }
   },
-
-  computed: {
-    ...mapGetters(['theUser'])
-  }
 }
 </script>
 

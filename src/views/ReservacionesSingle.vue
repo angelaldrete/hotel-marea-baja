@@ -13,33 +13,37 @@
         }) }}
       </div>
       <AddButton
-        v-if="occupiedRoomsCount > 0 && occupiedRoomsCount < 24"
+        v-if="occupiedRoomsCount > 0 && occupiedRoomsCount < 23"
         @click.prevent="$router.push('/crear-reservacion')"
       >
         Crear reservación
       </AddButton>
     </div>
 
-    <div class="occupied-rooms-available">
-      <div class="occupied-rooms">
-        Habitaciones ocupadas: <span>{{ occupiedRooms.length }}</span>
+    <Loading v-if="loading"/>
+    <template v-else>
+      <div class="occupied-rooms-available">
+        <div class="occupied-rooms">
+          Habitaciones ocupadas: <span>{{ occupiedRooms.length }}</span>
+        </div>
+        <div class="available-rooms">
+          Habitaciones disponibles: <span>{{ 23 - occupiedRooms.length }}</span>
+        </div>
       </div>
-      <div class="available-rooms">
-        Habitaciones disponibles: <span>{{ 24 - occupiedRooms.length }}</span>
-      </div>
-    </div>
 
-    <Reservation
-      v-for="reservation in filteredReservationsByDate"
-      :key="reservation.id"
-      :name="reservation.name"
-      :rooms="reservation.rooms"
-      :people="reservation.people"
-      :occupiedRooms="reservation.occupiedRooms"
-      :user="reservation.user"
-      :checkInTime="reservation.checkIn"
-      @click.prevent="$router.push(`/reservacion/${reservation._id}`)"
-    />
+      <Reservation
+        v-for="reservation in filteredReservationsByDate"
+        :key="reservation._id"
+        :name="reservation.name"
+        :rooms="reservation.rooms"
+        :people="reservation.people"
+        :occupiedRooms="reservation.occupiedRooms"
+        :user="reservation.user"
+        :checkInTime="reservation.checkIn"
+        @click.prevent="$router.push(`/reservacion/${reservation._id}`)"
+      />
+    </template>
+
 
   </div>
 
@@ -49,23 +53,25 @@
 import Reservation from '../components/Reservations/Reservation.vue'
 import AddButton from '../components/AddButton.vue'
 import { mapGetters } from 'vuex'
+import Loading from '../components/Loading.vue'
 
 export default {
   name: 'ReservacionesSingle',
   components: {
     Reservation,
-    AddButton
+    AddButton,
+    Loading
   },
 
   computed: {
     ...mapGetters(['allReservations']),
     filteredReservationsByDate() {
-      return this.allReservations.filter(reservation => reservation.dateOfArrival === this.$route.params.date)
+      return this.allReservations.filter(reservation => reservation.dateOfArrival <= this.$route.params.date && reservation.dateOfDeparture >= this.$route.params.date)
     },
 
     occupiedRoomsCount() {
       return this.allReservations.filter(reservation => {
-        if (reservation.dateOfArrival === this.$route.params.date)
+        if (reservation.dateOfArrival <= this.$route.params.date && reservation.dateOfDeparture >= this.$route.params.date)
           return reservation.occupiedRooms.length
       })
     },
@@ -79,16 +85,18 @@ export default {
 
   data:() => ({
     occupiedRooms: [],
+    loading: true
   }),
 
   mounted() {
     this.allReservations.forEach(reservation => {
-      if (reservation.dateOfArrival === this.$route.params.date) {
+      if (reservation.dateOfArrival <= this.$route.params.date && reservation.dateOfDeparture >= this.$route.params.date) {
         reservation.occupiedRooms.forEach(occupiedRoom => {
           this.occupiedRooms.push(occupiedRoom)
         })
       }
     })
+    this.loading = false
   }
 }
 </script>

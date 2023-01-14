@@ -14,13 +14,8 @@
       </div>
       <div class="occupied-rooms">
         Habitaciones ocupadas
-        <span v-for="room in occupiedRooms" class="occupied-room" :key="room">
-          <template v-if="occupiedRooms.length > 0 && occupiedRooms[occupiedRooms.length - 1] !== room">
-            {{ `${room},` }}
-          </template>
-          <template v-else>
-            {{ room }}
-          </template>
+        <span v-for="(room, index) in occupiedRooms" class="occupied-room" :key="room">
+          {{ (occupiedRooms.length - 1) === index ? room : room + ','}}
         </span>
       </div>
     </div>
@@ -38,36 +33,18 @@
     <div class="edit">
       <Button
         type="secondary"
-        @click.prevent="$router.push(`/editar-reservacion/${id}`,)"
+        @click="$router.push(`/editar-reservacion/${id}`,)"
       >
         Editar
       </Button>
     </div>
     <div class="delete">
       <Button
-        type="secondary"
-        @click.prevent="showDeletePopup"
+        type="delete"
+        @click="deleteReservation"
       >
-        Borrar
+        Eliminar
       </Button>
-    </div>
-    <div class="popup" v-if="toggleDeletePopup">
-      <h2 class="title">Borrar</h2>
-      <p>¿Estás seguro que quieres borrar la reservación? No hay vuelta atrás.</p>
-      <div class="btn-group">
-        <Button
-          type="secondary"
-          @click.prevent="removeReservation"
-        >
-          Borrar
-        </Button>
-        <Button
-          type="secondary"
-          @click.prevent="toggleDeletePopup = false"
-        >
-          Cancelar
-        </Button>
-      </div>
     </div>
   </div>
 </template>
@@ -82,7 +59,6 @@ export default {
     id: String,
     name: {
       type: String,
-      default: 'Berenice Meza'
     },
     rooms: {
       type: Number,
@@ -98,7 +74,6 @@ export default {
     },
     dateOfArrival: {
       type: String,
-      default: ' 22 / Julio / 2021'
     },
     checkInTime: {
       type: String,
@@ -111,9 +86,6 @@ export default {
     },
     user: {
       type: Object,
-      default: () => ({
-        fullName: 'Berenice Meza'
-      })
     }
   },
 
@@ -134,13 +106,15 @@ export default {
   },
 
   methods: {
-    ...mapActions(['deleteReservation']),
-    showDeletePopup() {
-      this.toggleDeletePopup = !this.toggleDeletePopup
-    },
+    ...mapActions({ removeReservation: 'deleteReservation' }),
 
-    async removeReservation() {
-      this.deleteReservation(this.id)
+    async deleteReservation() {
+      const answer = prompt(`Estas seguro que quieres borrar la reservacion ${this.name} (Ss/Nn)`)
+      if (answer && answer.match(/[Ss][Ii]?/g)) {
+        await this.removeReservation(this.id)
+        alert(`La reservacion ${this.name} fue borrada exitosamente`)
+        this.$router.push('/')
+      }
     }
   }
 }

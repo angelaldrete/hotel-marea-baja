@@ -8,6 +8,13 @@
   </button>
   <button
     @click="$emit('click', $event)"
+    v-else-if="type === 'delete'"
+    class="btn btn--delete"
+    >
+    <slot></slot>
+  </button>
+  <button
+    @click="$emit('click', $event)"
     v-else-if="type === 'no-bg'"
     class="btn btn--no-bg"
     >
@@ -62,6 +69,14 @@ export default {
       border-radius: 10px;
       &:hover {
         background: rgba($bg_secondary, 0.8);
+      }
+    }
+
+    &--delete {
+      background: $full;
+      border-radius: 10px;
+      &:hover {
+        background: rgba($full, 0.8);
       }
     }
 

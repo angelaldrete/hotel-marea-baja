@@ -26,7 +26,7 @@
 export default {
   name: 'ReservationSelectInput',
   props: {
-    value: Number,
+    value: String|Number,
     inputId: {
       type: String,
       required: false,

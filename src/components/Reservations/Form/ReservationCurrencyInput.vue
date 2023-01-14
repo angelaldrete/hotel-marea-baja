@@ -25,10 +25,7 @@
 export default {
   name: 'CurrencyInput',
   props: {
-    value: {
-      type: Number,
-      required: false
-    },
+    value: String|Number,
     inputId: {
       type: String,
       default: 'input'

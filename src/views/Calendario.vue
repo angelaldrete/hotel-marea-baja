@@ -39,20 +39,8 @@ export default {
   components: {
     CalendarMonth,
     AddButton,
-    ResponsiveCalendar
+    ResponsiveCalendar,
   },
-
-  computed: {
-    ...mapGetters(['allReservations'])
-  },
-
-  created() {
-    this.getAllReservations()
-  },
-
-  methods: {
-    ...mapActions(['getAllReservations']),
-  }
 }
 
 </script>

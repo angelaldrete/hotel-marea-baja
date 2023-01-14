@@ -4,9 +4,8 @@
       Agregar Usuario
     </div>
     <section class="user-name-edit">
-      <div class="subtitle">Editar Nombre del Usuario</div>
       <AuthInput
-        placeholder="Nombre Completo"
+        placeholder="Correo Electronico"
         type="user"
         inputType="text"
         v-model="fullName"
@@ -21,14 +20,14 @@
       <AuthInput
         placeholder="Contraseña"
         type="password"
-        inputType="text"
+        inputType="password"
         v-model="password"
       />
 
       <AuthInput
         placeholder="Confirmar Contraseña"
         type="password"
-        inputType="text"
+        inputType="password"
         v-model="passwordConfirmation"
       />
 
@@ -75,10 +74,12 @@ export default {
             email: this.email,
             password: this.password
           })
-          this.$router.push('/')
+          this.$router.push('/configuracion')
         } else {
           alert('Las contraseñas no coinciden')
         }
+      } else {
+        alert('Por favor llena el formulario')
       }
     }
   }
