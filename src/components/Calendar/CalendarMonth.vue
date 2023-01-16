@@ -177,7 +177,7 @@ export default {
       const month = theDate.getMonth() + 1
       const year = theDate.getFullYear()
       const res = await axios.get(
-        `${process.env.VUE_APP_API_ENDPOINT}/api/reservations/${month}/${year}`
+        `${process.env.VUE_APP_API_ENDPOINT}/reservations/${month}/${year}`
       );
       return res.data;
     }
