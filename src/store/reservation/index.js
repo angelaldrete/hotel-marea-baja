@@ -19,7 +19,7 @@ const getters = {
 const actions = {
   async fetchReservations({ commit }) {
     const res = await axios.get(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/reservations`
+      `${process.env.VUE_APP_API_ENDPOINT}/reservations`
     );
 
     commit(SET_RESERVATIONS, res.data);
@@ -27,14 +27,14 @@ const actions = {
 
   async fetchReservationsByMonth(_, { month, year }) {
     const res = await axios.get(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/reservations/${month}/${year}`
+      `${process.env.VUE_APP_API_ENDPOINT}/reservations/${month}/${year}`
     );
     return res.data;
   },
 
   async fetchReservationsByDate({ commit }, date) {
     const res = await axios.get(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/reservations`,
+      `${process.env.VUE_APP_API_ENDPOINT}/reservations`,
       {
         params: {
           date,
@@ -46,7 +46,7 @@ const actions = {
 
   async fetchReservationById(_, id) {
     const res = await axios.get(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/reservations/${id}`
+      `${process.env.VUE_APP_API_ENDPOINT}/reservations/${id}`
     );
 
     return res.data;
@@ -54,14 +54,14 @@ const actions = {
 
   async getConfirmationNumber() {
     const res = await axios.get(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/confirmation`
+      `${process.env.VUE_APP_API_ENDPOINT}/confirmation`
     );
     return res.data.confirmationNumber;
   },
 
   async createReservation({ commit }, reservation) {
     const res = await axios.post(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/reservations`,
+      `${process.env.VUE_APP_API_ENDPOINT}/reservations`,
       reservation
     );
 
@@ -70,7 +70,7 @@ const actions = {
 
   async getAvailableRoomsByDate(_, { dateOfArrival, dateOfDeparture }) {
     const res = await axios.get(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/available_rooms/${dateOfArrival}/${dateOfDeparture}`
+      `${process.env.VUE_APP_API_ENDPOINT}/available_rooms/${dateOfArrival}/${dateOfDeparture}`
     );
 
     return res.data;
@@ -78,7 +78,7 @@ const actions = {
 
   async updateReservation({ commit }, reservation) {
     const res = await axios.put(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/reservations/${reservation.id}`,
+      `${process.env.VUE_APP_API_ENDPOINT}/reservations/${reservation.id}`,
       reservation
     );
     commit(UPDATE_RESERVATION, reservation);
@@ -86,7 +86,7 @@ const actions = {
 
   async deleteReservation({ commit }, id) {
     const res = await axios.delete(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/reservations/${id}`
+      `${process.env.VUE_APP_API_ENDPOINT}/reservations/${id}`
     );
     commit(REMOVE_RESERVATION, id);
   },

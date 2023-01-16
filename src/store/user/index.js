@@ -25,7 +25,7 @@ const getters = {
 const actions = {
   async registerUser({ commit }, { fullName, email, password }) {
     const response = await axios.post(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/users/register`,
+      `${process.env.VUE_APP_API_ENDPOINT}/users/register`,
       { fullName, email, password }
     );
 
@@ -39,7 +39,7 @@ const actions = {
     };
 
     const response = await axios.post(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/users/login`,
+      `${process.env.VUE_APP_API_ENDPOINT}/users/login`,
       body
     );
 
@@ -59,16 +59,14 @@ const actions = {
   },
 
   async fetchUsers({ commit }) {
-    const res = await axios.get(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/users`
-    );
+    const res = await axios.get(`${process.env.VUE_APP_API_ENDPOINT}/users`);
 
     commit(SET_USERS, res.data);
   },
 
   async fetchUserById(_, id) {
     const res = await axios.get(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/users/${id}`
+      `${process.env.VUE_APP_API_ENDPOINT}/users/${id}`
     );
     return res.data;
   },
@@ -76,7 +74,7 @@ const actions = {
   async modifyEmail({ commit }, user) {
     const { id, email } = user;
     const res = await axios.put(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/users/email/${id}`,
+      `${process.env.VUE_APP_API_ENDPOINT}/users/email/${id}`,
       {
         email,
       }
@@ -88,7 +86,7 @@ const actions = {
   async modifyPassword({ commit }, user) {
     const { id, password } = user;
     const res = await axios.put(
-      `${process.env.VUE_APP_API_ENDPOINT}/api/users/password/${id}`,
+      `${process.env.VUE_APP_API_ENDPOINT}/users/password/${id}`,
       {
         password,
       }
@@ -98,7 +96,7 @@ const actions = {
   },
 
   async deleteUser({ commit }, id) {
-    await axios.delete(`${process.env.VUE_APP_API_ENDPOINT}/api/users/${id}`);
+    await axios.delete(`${process.env.VUE_APP_API_ENDPOINT}/users/${id}`);
     commit(REMOVE_USER, id);
   },
 };
